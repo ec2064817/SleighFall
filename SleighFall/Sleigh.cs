@@ -11,7 +11,7 @@ namespace SleighFall
 {
     internal class Sleigh
     {
-        private Rectangle _rect;
+        public Rectangle Rect;
         private Texture2D _txr;
 
 
@@ -21,7 +21,7 @@ namespace SleighFall
         {
             _txr = txr;
             
-            _rect = new Rectangle(xPos, yPos, _txr.Width, _txr.Height);
+            Rect = new Rectangle(xPos, yPos, _txr.Width, _txr.Height);
         }
 
         public void UpdateMe(GamePadState pad, int screenWidth)
@@ -29,22 +29,22 @@ namespace SleighFall
             if (pad.DPad.Left == ButtonState.Pressed)
             {
                 _travellingRight = false;
-                _rect.X -= 4;
+                Rect.X -= 4;
             }
             else if (pad.DPad.Right == ButtonState.Pressed)
             {
                 _travellingRight = true;
-                _rect.X += 4;
+                Rect.X += 4;
             }
 
-            if (_rect.X > screenWidth - _txr.Width)
+            if (Rect.X > screenWidth - _txr.Width)
             {
-                _rect.X = screenWidth - _txr.Width;
+                Rect.X = screenWidth - _txr.Width;
             }
 
-            if (_rect.X < 0)
+            if (Rect.X < 0)
             {
-                _rect.X = 0;
+                Rect.X = 0;
             }
         }
 
@@ -52,11 +52,11 @@ namespace SleighFall
         {
             if (_travellingRight)
             {
-              sb.Draw(_txr, _rect, Color.White);
+              sb.Draw(_txr, Rect, Color.White);
             }
             else
             {
-              sb.Draw(_txr, _rect,null, Color.White, 0, Vector2.Zero, SpriteEffects.FlipHorizontally, 0);
+              sb.Draw(_txr, Rect,null, Color.White, 0, Vector2.Zero, SpriteEffects.FlipHorizontally, 0);
             }
             
         }
