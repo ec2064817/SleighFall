@@ -15,13 +15,13 @@ namespace SleighFall
         float _rot;
         float _rotSpeed;
 
-        public Snowflake(Texture2D txr, int maxX)
+        public Snowflake(Texture2D txr, int maxX, int maxY)
         {
             _txr = txr;
-            _pos = new Vector2(Game1.RNG.Next(0, maxX), 0);
+            _pos = new Vector2(Game1.RNG.Next(-500, maxX + 100), Game1.RNG.Next(-500, maxY));
             _vel = new Vector2(0, (float) Game1.RNG.NextDouble() + 0.25f);
             _rot = 0;
-            _rotSpeed = (float) (Game1.RNG.NextDouble() - 0.5f) / 4;  
+            _rotSpeed = (float) (Game1.RNG.NextDouble() - 0.5f) / 10;  
 
             
         }
@@ -29,11 +29,13 @@ namespace SleighFall
         public void UpdateMe(int maxX, int maxY)
         {
             _pos = _pos + _vel;
+            _rot = _rot + _rotSpeed;
 
             if (_pos.Y > maxY)
             {
-                _pos.X = 150;
-                _pos.Y = 0;
+                _pos = new Vector2(Game1.RNG.Next(-500, maxX + 100), Game1.RNG.Next(-500, 0));
+                _vel = new Vector2(0, (float)Game1.RNG.NextDouble() + 0.25f);
+                _rotSpeed = (float)(Game1.RNG.NextDouble() - 0.5f) / 10;
             }
             
 
@@ -41,7 +43,9 @@ namespace SleighFall
 
         public void DrawMe(SpriteBatch sb)
         {
-            sb.Draw(_txr, _pos, null, Color.White * 0.75f, 0, Vector2.Zero, _vel.Y, SpriteEffects.None, 0);
+            sb.Draw(_txr, _pos, null, Color.White * 0.75f,
+                _rot, Vector2.Zero, _vel.Y,
+                SpriteEffects.None, 0);
         }
     }
 }
