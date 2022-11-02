@@ -8,7 +8,7 @@ namespace SleighFall
 {
     internal class Bauble
     {
-        enum BaubleState
+        public enum BaubleState
         {
             Falling,
             Crashed
@@ -17,11 +17,17 @@ namespace SleighFall
         BaubleState _currState;
 
         private Texture2D _txr;
-        Rectangle _rect;
+        public Rectangle Rect;
 
         Vector2 _pos;
         Vector2 _vel;
-     
+
+        
+
+        public BaubleState GetState()
+        {
+            return _currState;
+        }
 
         public Bauble(Texture2D txr, int maxX)
         {
@@ -30,7 +36,7 @@ namespace SleighFall
             _txr = txr;
 
             _pos = new Vector2(Game1.RNG.Next(0, maxX), 0);
-            _rect = new Rectangle(_pos.ToPoint(), txr.Bounds.Size);
+            Rect = new Rectangle(_pos.ToPoint(), txr.Bounds.Size);
 
             _vel = new Vector2(0, (float)Game1.RNG.NextDouble()*2 + 0.5f);
         }
@@ -46,13 +52,15 @@ namespace SleighFall
                 
             }
 
-            _rect.Location = _pos.ToPoint();
+            Rect.Location = _pos.ToPoint();
 
         }
 
+        
+
         public void DrawMe(SpriteBatch sb)
         {
-            sb.Draw(_txr, _rect, Color.White);
+            sb.Draw(_txr, Rect, Color.White);
         }
     }
 }

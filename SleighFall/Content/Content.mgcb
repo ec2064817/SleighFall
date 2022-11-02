@@ -128,6 +128,13 @@
 /processorParam:TextureFormat=Color
 /build:nightbackground.png
 
+#begin Score.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Score.spritefont
+
 #begin sleigh.png
 /importer:TextureImporter
 /processor:TextureProcessor

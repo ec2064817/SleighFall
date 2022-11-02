@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using static SleighFall.Bauble;
 
 namespace SleighFall
 {
@@ -13,6 +14,7 @@ namespace SleighFall
         private SpriteBatch _spriteBatch;
 
         SpriteFont debugFont;
+        SpriteFont scoreFont;
 
         Background background;
         Sleigh p1Sleigh;
@@ -27,6 +29,12 @@ namespace SleighFall
         GamePadState pad1_curr;
 
         Rectangle screenSize;
+
+        const float baseSpawnRate = 5;
+        float spawnRate, timeTillSpawn;
+        int baublesPerSpawn;
+
+        int score;
 
         public Game1()
         {
@@ -46,6 +54,12 @@ namespace SleighFall
 
             baubles = new List<Bauble>();
 
+            spawnRate= baseSpawnRate;
+            timeTillSpawn = baseSpawnRate;
+            baublesPerSpawn = 1;
+
+            score = 0;
+
             base.Initialize();
         }
 
@@ -56,11 +70,15 @@ namespace SleighFall
             background = new Background(Content.Load<Texture2D>("nightbackground"));
             p1Sleigh = new Sleigh(Content.Load<Texture2D>("sleigh"), 400, 600);
             debugFont = Content.Load<SpriteFont>("Arial07");
+            scoreFont = Content.Load<SpriteFont>("Score");
+
 
             for (int i = 0; i < 8; i++)
-            {
-                Content.Load<Texture2D>("bauble"+i);
-            }
+           {
+              Content.Load<Texture2D>("bauble" + i);
+           }
+
+
 
             for (int i = 0; i < SNOWFLAKES; i++)
             {
@@ -79,8 +97,28 @@ namespace SleighFall
                 Exit();
             }
 
-            baubles.Add(new Bauble(Content.Load<Texture2D>("bauble" + RNG.Next(0, 8)),
-                                    _graphics.PreferredBackBufferWidth));
+            if (timeTillSpawn < 0)
+            {
+                baubles.Add(new Bauble(Content.Load<Texture2D>("bauble" + RNG.Next(0, 8)),
+                                   _graphics.PreferredBackBufferWidth));
+
+                if (spawnRate < baseSpawnRate / 2)
+                {
+                    spawnRate = baseSpawnRate;
+                    baublesPerSpawn++;
+                }
+                else
+                {
+                    spawnRate -= 0.2f;
+                }
+
+                timeTillSpawn = spawnRate;
+            }
+            else
+            {
+                timeTillSpawn -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+           
 
             p1Sleigh.UpdateMe(pad1_curr, screenSize.Width);
 
@@ -93,6 +131,25 @@ namespace SleighFall
             for (int i = 0; i < baubles.Count; i++)
             {
                 baubles[i].UpdateMe(_graphics.PreferredBackBufferHeight);
+            }
+
+            for (int i = 0; i < baubles.Count; i++)
+            {
+                if (baubles[i].GetState() == BaubleState.Crashed)
+                {
+                    baubles.RemoveAt(i);
+                    break;
+                }
+            }
+
+            for (int i = 0; i < baubles.Count; i++)
+            {
+                if (baubles[i].Rect.Intersects(p1Sleigh.Rect))
+                {
+                    baubles.RemoveAt(i);
+                    ++score;
+                    break;
+                }
             }
 
             base.Update(gameTime);
@@ -121,8 +178,12 @@ namespace SleighFall
             {
                 _spriteBatch.DrawString(debugFont, "Res: " + _graphics.PreferredBackBufferWidth + " x " + _graphics.PreferredBackBufferHeight, Vector2.Zero, Color.White);
                 _spriteBatch.DrawString(debugFont, "Sleigh: " + p1Sleigh.Rect, new Vector2(0, 12), Color.White);
+                _spriteBatch.DrawString(debugFont, "Baubles: " + baubles.Count, new Vector2(0, 24), Color.White);
+                _spriteBatch.DrawString(debugFont, "Baubles per spawn: " + baublesPerSpawn + " Spawn in: " + timeTillSpawn, new Vector2(0, 36), Color.White);
+                _spriteBatch.DrawString(debugFont, "Baubles spawn rate: " + spawnRate, new Vector2(0, 48), Color.White);
             }
-            
+
+            _spriteBatch.DrawString(scoreFont, "Score: " + score, new Vector2(0, 12), Color.White);
 
             _spriteBatch.End();
 
